@@ -61,6 +61,7 @@ foreign key(branch_id) references library_branch(branch_id) on delete cascade
 
 insert into publisher values('mcgraw','hobo',108);
 insert into publisher values('pearson','nagpur',911);
+insert into publisher values('kaustubh','shetty',912);
 select *from publisher;
 
 
@@ -86,8 +87,32 @@ select *from book_copies;
 
 insert into book_lending values('113','3456','99','2020-05-24','2020-05-28');
 insert into book_lending values('113','3457','98','2020-06-10','2020-07-29');
+insert into book_lending values('113','3458','100','2020-05-24','2020-05-28');
+insert into book_lending values('113','3459','101','2020-06-10','2020-07-29');
 select *from book_lending;
 
+
+--query to get all the values of bid,pubname etc
 select b.book_id,b.title,b.pub_name,ba.author_name,bc.branch_id,bc.no_of_copies from book b,book_authors ba,book_copies bc where b.book_id=bc.book_id and b.book_id=ba.book_id
 
+
 select distinct card_no from book_lending b where (date_out between '01-jan-2020' and '30-jul-2020')group by card_no having count(*)>0;
+
+--Retrive the details of publisher who published more than 3 books
+select p.name from publisher p,book b where p.name=b.pub_name group by  p.name having count(*)>0;
+
+
+
+--Retrive the details of publisher without any books
+select p.name,p.address,p.phone from publisher p
+where not exists(select pub_name from book where(p.name=pub_name))
+
+--Retreive the details of authors who have authored more than 1 books
+select author_name from book_authors
+group by author_name having count(author_name)>1;
+
+--retreive the details of books with more than 2 authors
+
+
+--delete a book in BOOK table
+delete from book where book_id='114'
