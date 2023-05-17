@@ -87,3 +87,7 @@ select *from book_copies;
 insert into book_lending values('113','3456','99','2020-05-24','2020-05-28');
 insert into book_lending values('113','3457','98','2020-06-10','2020-07-29');
 select *from book_lending;
+
+select b.book_id,b.title,b.pub_name,ba.author_name,bc.branch_id,bc.no_of_copies from book b,book_authors ba,book_copies bc where b.book_id=bc.book_id and b.book_id=ba.book_id
+
+select distinct card_no from book_lending b where (date_out between '01-jan-2020' and '30-jul-2020')group by card_no having count(*)>0;
