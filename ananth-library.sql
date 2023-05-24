@@ -5,7 +5,7 @@
 
 -- Creating Table Publisher (1)
 
-USE	LibraryDB;
+USE	[4NM21AI010library];
 
 create table publisher
 (
@@ -145,3 +145,50 @@ select * from library_branch
 select * from book_authors
 select * from book_copies
 select * from book_lending;
+
+
+--1.query to get all the values of bid,pubname etc
+select b.book_id,b.title,b.pub_name,ba.author_name,bc.branch_id,bc.no_of_copies from book b,book_authors ba,book_copies bc where b.book_id=bc.book_id and b.book_id=ba.book_id
+
+
+select distinct card_no from book_lending b where (date_out between '01-jan-2020' and '30-jul-2020')group by card_no having count(*)>0;
+
+--2.Retrive the details of publisher who published more than 3 books
+select p.name from publisher p,book b where p.name=b.pub_name group by  p.name having count(*)>0;
+
+
+
+--3.Retrive the details of publisher without any books
+select p.name,p.address,p.phone from publisher p
+where not exists(select pub_name from book where(p.name=pub_name))
+
+--4.Retreive the details of authors who have authored more than 1 books
+select author_name from book_authors
+group by author_name having count(author_name)>1;
+
+--5.retreive the details of books with more than 2 authors
+
+
+--6.delete a book in BOOK table
+delete from book where book_id='114'
+
+
+--7.create a view of all books and its number of copies that are currently available in the library
+--begin transaction;
+--commit transaction;
+create view available as
+(
+select book_id,sum(no_of_copies)-(select count(card_no) from book_lending where b.book_id=book_id)as avail_copies from book_copies b group by book_id
+);
+select *from available;
+--5.Retreive the details of publisher who published more than 3 books
+Select p.name from publisher p,book b where p.name=b.pub_name group by p.name having COUNT(b.book_id)>3;
+
+--6.retreive the details of publisher whohas not published any book
+select p.name from publisher p where  p.name not in(select distinct pub_name from book);
+
+--7.Get the particulars of book with more than 3 authors
+select b.book_id from book b,book_authors ba where b.book_id=ba.book_id group by b.book_id having count(ba.author_name)>3;
+
+--8.get the particulars of library branch which has zero copies of book with id 112
+select branch_id from library_branch b where branch_id not in(select branch_id from book_copies where book_id='112');
